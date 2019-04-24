@@ -73,7 +73,7 @@ public class Controller
 			else score[i] = -1;
 		}
 		score[ID] = -1;
-		int min = score[1], pos = 1;
+		int min = 999999999, pos = 1;
 		for(int j = 1; j <= 4; j++)
 		{
 			if(score[j] < min && score[j] != -1)
@@ -82,25 +82,18 @@ public class Controller
 				min = score[j];
 			}
 		}
-		System.out.println(ATMS[pos].getId());
 		return ATMS[pos];
 	}
 	
 	public void goToATM(ATM dest, int ID, List<Account> accounts)
 	{
-		System.out.println("start:" + date.getTime().toString());
-		System.out.println("trav time:" + travelTime[ID][dest.getId()]);
 		passTime(travelTime[ID][dest.getId()],accounts);
-		
-		System.out.println("middle:" + date.getTime().toString());
 		
 		Hour h = new Hour(date.getTime().getHour(),date.getTime().getMinute());
 		if(!(h.getHour() >= ATMS[dest.getId()].getOpenTime().getHour() && h.getMinute() >= ATMS[dest.getId()].getOpenTime().getMinute()))
 		{
-			System.out.println("wait time:" + waitTime(h, ATMS[dest.getId()].getOpenTime()));
 			passTime(waitTime(h, ATMS[dest.getId()].getOpenTime()),accounts);
 		}
-		System.out.println("end:" + date.getTime().toString() + "\n");
 	}
 	
 	public void passTime(int mins, List<Account> accounts)
@@ -119,124 +112,6 @@ public class Controller
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<Account> redistributeMoneyOLD(List<Account> accounts) 
-	{
-		int cashLimit;
-		
-		Collections.sort(accounts);
-		List<Account> result = new ArrayList<Account>();
-		
-		List<Account> silver = sortList("silver", accounts);
-		List<Account> gold = sortList("gold", accounts);
-		List<Account> platinum = sortList("platinum", accounts);
-		
-		User owner = accounts.get(0).getOwner();
-		
-		for(Account a : platinum)
-		{
-			a.setLimit(500);
-			if(a.getSum() < 500)
-			{
-				float value = 500 - a.getSum();
-				a.setFlag(true);
-				while(a.getSum() < 500 && value != 0 && target(accounts) != null)
-				{
-					Account t = target(accounts);
-					float remainder = t.withdraw(value);
-					a.deposit(value - remainder);
-					value = remainder;
-				}
-			}
-		}
-		
-		for(Account a : gold)
-		{
-			a.setLimit(500);
-			if(a.getSum() < 500)
-			{
-				float value = 500 - a.getSum();
-				a.setFlag(true);
-				while(a.getSum() < 500 && value != 0 && target(accounts) != null)
-				{
-					Account t = target(accounts);
-					float remainder = t.withdraw(value);
-					a.deposit(value - remainder);
-					value = remainder;
-				}
-			}
-		}
-		
-		for(Account a : platinum)
-		{
-			a.setLimit(5000);
-			if(a.getSum() < 5000)
-			{
-				float value = 5000 - a.getSum();
-				a.setFlag(true);
-				while(a.getSum() < 5000 && value != 0 && target(accounts) != null)
-				{
-					Account t = target(accounts);
-					float remainder = t.withdraw(value);
-					a.deposit(value - remainder);
-					value = remainder;
-				}
-			}
-		}
-		
-		for(Account a : gold)
-		{
-			a.setLimit(5000);
-			if(a.getSum() < 5000)
-			{
-				float value = 5000 - a.getSum();
-				a.setFlag(true);
-				while(a.getSum() < 5000 && value != 0 && target(accounts) != null)
-				{
-					Account t = target(accounts);
-					float remainder = t.withdraw(value);
-					a.deposit(value - remainder);
-					value = remainder;
-				}
-			}
-		}
-		
-		for(Account a : silver)
-		{
-			a.setLimit(500);
-			if(a.getSum() < 500)
-			{
-				float value = 500 - a.getSum();
-				a.setFlag(true);
-				while(a.getSum() < 500 && value != 0 && target(accounts) != null)
-				{
-					Account t = target(accounts);
-					float remainder = t.withdraw(value);
-					a.deposit(value - remainder);
-					value = remainder;
-				}
-			}
-		}
-		
-		for(Account a : silver)
-		{
-			a.setLimit(5000);
-			if(a.getSum() < 5000)
-			{
-				float value = 5000 - a.getSum();
-				a.setFlag(true);
-				while(a.getSum() < 5000 && value != 0 && target(accounts) != null)
-				{
-					Account t = target(accounts);
-					float remainder = t.withdraw(value);
-					a.deposit(value - remainder);
-					value = remainder;
-				}
-			}
-		}
-		return result;
-	}
-	
-	@SuppressWarnings("unchecked")
 	public List<Account> redistributeMoney(List<Account> accounts) 
 	{	
 		Collections.sort(accounts);
@@ -248,7 +123,6 @@ public class Controller
 		
 		User owner = accounts.get(0).getOwner();
 		ATM newATM = findNextATM(owner.getLocation());
-		System.out.println("\nSENT FROM " + newATM.getId());
 		goToATM(newATM, owner.getLocation(), result);
 		owner.setLocation(newATM.getId());
 		
@@ -279,7 +153,6 @@ public class Controller
 						
 						
 						newATM = findNextATM(owner.getLocation());
-						System.out.println("SENT FROM " + newATM.getId());
 						goToATM(newATM, owner.getLocation(), result);
 						owner.setLocation(newATM.getId());
 						
@@ -319,7 +192,6 @@ public class Controller
 						
 						
 						newATM = findNextATM(owner.getLocation());
-						System.out.println("SENT FROM " + newATM.getId());
 						goToATM(newATM, owner.getLocation(), result);
 						owner.setLocation(newATM.getId());
 						
@@ -358,7 +230,6 @@ public class Controller
 						value = remainder;
 						
 						newATM = findNextATM(owner.getLocation());
-						System.out.println("SENT FROM " + newATM.getId());
 						goToATM(newATM, owner.getLocation(), result);
 						owner.setLocation(newATM.getId());
 						
@@ -397,7 +268,6 @@ public class Controller
 						value = remainder;
 						
 						newATM = findNextATM(owner.getLocation());
-						System.out.println("SENT FROM " + newATM.getId());
 						goToATM(newATM, owner.getLocation(), result);
 						owner.setLocation(newATM.getId());
 						
@@ -436,7 +306,6 @@ public class Controller
 						value = remainder;
 						
 						newATM = findNextATM(owner.getLocation());
-						System.out.println("SENT FROM " + newATM.getId());
 						goToATM(newATM, owner.getLocation(), result);
 						owner.setLocation(newATM.getId());
 						
@@ -475,7 +344,6 @@ public class Controller
 						value = remainder;
 						
 						newATM = findNextATM(owner.getLocation());
-						System.out.println("SENT FROM " + newATM.getId());
 						goToATM(newATM, owner.getLocation(), result);
 						owner.setLocation(newATM.getId());
 						
@@ -536,12 +404,12 @@ public class Controller
 		Collections.sort(accounts);
 		List<Account> result = sortList("all",accounts);
 		
-		System.out.println();
 		for(Account a : result)
 		{
 			System.out.println(a.toString());
 		}
 		System.out.println(date.toString());
+		System.out.println();
 	}
 	
 }
