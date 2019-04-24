@@ -1,8 +1,12 @@
+/*
+ * Andrei Bercean
+ * UTCN 30233
+ */
+
 package core;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import model.*;
 
 public class Main {
