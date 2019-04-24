@@ -17,6 +17,21 @@ public class Date
 		time = new Hour(hour, minute);
 	}
 	
+	public void passTimeMonths(int months)
+	{
+		while(months > 12)
+		{
+			months -= 12;
+			year++;
+		}
+		if((month + months) > 12)
+		{
+			months -= 12;
+			year++;
+		}
+		month = month + months;
+	}
+	
 	public void passTime(int mins)
 	{
 		int days = time.passTime(mins);

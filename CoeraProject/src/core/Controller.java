@@ -22,7 +22,7 @@ public class Controller
 					 	  new ATM(3, new Hour(22,00), new Hour(13,00),5000),
 						  new ATM(4, new Hour(17,00), new Hour(01,00),5000)};
 	
-	public boolean arrival(int mins, Hour h, Hour limit)
+	private boolean arrival(int mins, Hour h, Hour limit)
 	{
 		Hour test = new Hour(h.getHour(), h.getMinute());
 		test.passTime(mins);
@@ -31,7 +31,7 @@ public class Controller
 		return false;
 	}
 	
-	public int waitTime(Hour start, Hour end)
+	private int waitTime(Hour start, Hour end)
 	{
 		int hours, minutes = 0;
 
@@ -51,7 +51,7 @@ public class Controller
 		return hours * 60 + minutes;
 	}
 	
-	public ATM findNextATM(int ID)
+	private ATM findNextATM(int ID)
 	{
 		int score[] = new int[5];
 		for(int i = 1; i <= 4; i++)
@@ -85,7 +85,7 @@ public class Controller
 		return ATMS[pos];
 	}
 	
-	public void goToATM(ATM dest, int ID, List<Account> accounts)
+	private void goToATM(ATM dest, int ID, List<Account> accounts)
 	{
 		passTime(travelTime[ID][dest.getId()],accounts);
 		
@@ -96,18 +96,39 @@ public class Controller
 		}
 	}
 	
+	public void passTimeMonths(int months, List<Account> accounts)
+	{
+		int year,newYear;
+		year = date.getYear();
+		date.passTimeMonths(months);
+		newYear = date.getYear();
+		for(Account a : accounts)
+		{
+			int diff = newYear - a.getExpiration().getYear();
+			if(diff < 0)
+				for(int i = 0; i < (newYear - year); i++)
+					a.compute();
+			else
+				for(int i = 0; i < (a.getExpiration().getYear() - year); i++)
+					a.compute();
+		}
+	}
+	
 	public void passTime(int mins, List<Account> accounts)
 	{
 		int year,newYear;
 		year = date.getYear();
 		date.passTime(mins);
 		newYear = date.getYear();
-		for(int i = 0; i < (newYear - year); i++)
+		for(Account a : accounts)
 		{
-			for(Account a : accounts)
-			{
-				a.compute();
-			}
+			int diff = newYear - a.getExpiration().getYear();
+			if(diff < 0)
+				for(int i = 0; i < (newYear - year); i++)
+					a.compute();
+			else
+				for(int i = 0; i < (a.getExpiration().getYear() - year); i++)
+					a.compute();
 		}
 	}
 	
@@ -359,7 +380,7 @@ public class Controller
 	}
 	
 	@SuppressWarnings("unchecked")
-	public Account target(List<Account> accounts)
+	private Account target(List<Account> accounts)
 	{
 		Collections.sort(accounts);
 		List<Account> aux = new ArrayList<Account>();
@@ -379,7 +400,7 @@ public class Controller
 		return null;
 	}
 	
-	public List<Account> sortList(String type, List<Account> input)
+	private List<Account> sortList(String type, List<Account> input)
 	{	
 		List<Account> result = new ArrayList<Account>();
 		if(type == "all")
